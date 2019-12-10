@@ -1,0 +1,13 @@
+{
+  "name": "tsm-parse",
+  "version": "1.0.0",
+  "description": "sources:\r https://bitbucket.org/post-fix/wow-itemname_to_itemid/src/master/item-name_item-d.txt\r https://us.battle.net/forums/en/bnet/topic/14729973498",
+  "main": "tsm-extract.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node tsm-extract Whitemane-Alliance data/itemIdNameMap.json \"C:/Program Files (x86)/World of Warcraft/_classic_/Interface/AddOns/TradeSkillMaster_AppHelper/AppData.lua\""
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC"
+}
