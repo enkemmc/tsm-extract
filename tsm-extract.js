@@ -1,14 +1,13 @@
 const fs = require('fs')
 const { exec } = require('child_process')
 
-const defaultAppDataPath = './AppData.lua'
 const classicHeaders = 'itemString,regionMarketValue,regionMinBuyout,regionHistorical,regionSale,regionSoldPerDay,regionSalePercent,'
 const headersForEveryOtherServer = 'itemString,marketValue,minBuyout,historical,numAuctions,'
 
 
 function main(){
-    const {serverName, mapFilePath, providedAppDataPath} = parseArgs()
-    let appDataFilePath = providedAppDataPath ? providedAppDataPath : defaultAppDataPath
+    
+    const {serverName, mapFilePath, appDataFilePath, automaticallyOpenCSV} = getSettings()
 
     const rawtext = String(fs.readFileSync(appDataFilePath))
 
@@ -18,14 +17,13 @@ function main(){
     const itemsArr = getItemsArr(rawtext, serverName)
     
     let map
-    //
+    
     if (mapFilePath){
         map = getItemIdToItemNameMap(mapFilePath)
         headers = 'itemName,' + headers
     }
     
     // save items in csv file
-
     const items_as_csv = itemsArr.reduce((pv, line_as_arr) => {
         let line_as_csv = line_as_arr.reduce((pv, value) => pv += `${value},`,'')
         if (mapFilePath){
@@ -49,13 +47,14 @@ function main(){
         fs.writeFileSync(output_file_path, items_as_csv)
     } catch(e){      
         // user may already have the file open that they requested we write to  
-        console.log(`there was an error finding or opening output.csv`)
+        console.log(`there was an error finding or opening ${output_file_path}`)
         console.log(e.message)
         process.exit(1)
     }
 
-    // blarrrrgh windows
-    exec(`start "" ${output_file_path}`)
+    if (automaticallyOpenCSV){
+        exec(`start "" ${output_file_path}`)
+    }
 }
 
 function getItemsArr(rawtext, serverName){
@@ -99,36 +98,10 @@ function getPossibleServerNames(rawtext){
     return possibleNamesArr
 }
 
-// gets servername and mapofnamestofiles
-function parseArgs(){
-    if (process.argv.length < 3){
-        console.error(`please enter your server name.  running this app requires something like this: node tsm-extract Whitemane-Alliance\r\n`)
-        // maybe list possible arguments here
-        process.exit(0)
-    }
-
-    const results = {}
-
-    const serverName = process.argv[2]
-    console.log(`getting data from ${serverName}`)
-    results.serverName = serverName
-
-    if (process.argv.length > 3){
-        const mapFilePath = process.argv[3]
-        results.mapFilePath = mapFilePath
-        console.log(`mapping data from ${mapFilePath}`)
-    }
-
-    if (process.argv.length > 4){
-        const providedAppDataPath = process.argv[4]
-        results.providedAppDataPath = providedAppDataPath
-        console.log(`reading data from ${providedAppDataPath}`)
-        
-    } else{
-        console.log(`assuming AppData.lua is located in ${defaultAppDataPath}`)
-    }
-
-    return results
+function getSettings(){
+    const rawtext = String(fs.readFileSync('./mysettings.json'))
+    const settings = JSON.parse(rawtext)
+    return settings
 }
 
 function getItemIdToItemNameMap(mapFilePath){

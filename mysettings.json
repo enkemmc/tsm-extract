@@ -1,0 +1,6 @@
+{
+    "serverName": "Whitemane-Alliance",
+    "appDataFilePath": "C:/Program Files (x86)/World of Warcraft/_classic_/Interface/AddOns/TradeSkillMaster_AppHelper/AppData.lua",
+    "mapFilePath": "data/itemIdNameMap.json",
+    "automaticallyOpenCSV": false
+}
