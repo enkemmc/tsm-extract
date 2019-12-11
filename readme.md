@@ -24,5 +24,5 @@ git clone https://github.com/enkemmc/tsm-extract
 ## Usage
 
 ```bash
-node tsm-extract.js
+node tsm-extract
 ```
